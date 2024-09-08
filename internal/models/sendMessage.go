@@ -5,8 +5,8 @@ type SendMessage struct {
 	RecipientType    string   `json:"recipient_type"`
 	To               string   `json:"to"`
 	Type             string   `json:"type"`
-	Text             SendText `json:"text"`
-	Template         Template `json:"template"`
+	Text             SendText `json:"text,omitempty"`
+	Template         Template `json:"template,omitempty"`
 }
 
 type SendText struct {
