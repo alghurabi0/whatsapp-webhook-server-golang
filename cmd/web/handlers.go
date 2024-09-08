@@ -50,12 +50,20 @@ func (app *application) processPayload(w http.ResponseWriter, r *http.Request) {
 		app.errorLog.Printf("couldn't read body, error: %v\n", err)
 		return
 	}
+	app.infoLog.Println(string(body))
 	err = json.Unmarshal(body, &payload)
 	if err != nil {
 		app.errorLog.Printf("failed to unmarshal json, error: %v\n", err)
 		return
 	}
-	app.infoLog.Println(payload.Entry[0].Changes[0].Value.Messages[0].Text.Body)
+	if payload.Entry[0].Changes[0].Value.Messages[0].Text.Body == "Hi" {
+		err = app.sendTemplate("start_conversation_template")
+		if err != nil {
+			app.errorLog.Printf("error sending template, error: %v\n", err)
+			return
+		}
+
+	}
 }
 
 func (app *application) sendMessage(w http.ResponseWriter, r *http.Request) {
