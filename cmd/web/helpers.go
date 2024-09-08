@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
 	"net/http"
 	"os"
 
@@ -52,5 +53,11 @@ func (app *application) sendTemplate(name string) error {
 
 	defer res.Body.Close()
 	app.infoLog.Printf("message status: %s\n", res.Status)
+	body, err := io.ReadAll(res.Body)
+	if err != nil {
+		return fmt.Errorf("failed to read response body, error: %v", err)
+	}
+	app.infoLog.Println(string(body))
+
 	return nil
 }
