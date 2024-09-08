@@ -11,6 +11,11 @@ import (
 	"github.com/alghurabi0/whatsapp-webhook-server-golang/internal/models"
 )
 
+func (app *application) home(w http.ResponseWriter, r *http.Request) {
+	app.infoLog.Println("welcome home")
+	w.Write([]byte("welcome home"))
+}
+
 func (app *application) verifyHook(w http.ResponseWriter, r *http.Request) {
 	mode := r.URL.Query().Get("hub.mode")
 	if mode == "" {
