@@ -12,6 +12,10 @@ import (
 )
 
 func (app *application) home(w http.ResponseWriter, r *http.Request) {
+	if r.URL.Path != "/" {
+		app.infoLog.Println("not home")
+		return
+	}
 	app.infoLog.Println("welcome home")
 	w.Write([]byte("welcome home"))
 }
