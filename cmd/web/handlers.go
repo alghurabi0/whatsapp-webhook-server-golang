@@ -81,7 +81,8 @@ func (app *application) sendMessage(w http.ResponseWriter, r *http.Request) {
 		RecipientType:    "individual",
 		To:               phone,
 		Type:             "text",
-		Text: models.SendText{
+		Template:         nil,
+		Text: &models.SendText{
 			PreviewUrl: false,
 			Body:       text,
 		},

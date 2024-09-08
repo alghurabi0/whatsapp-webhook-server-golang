@@ -25,7 +25,8 @@ func (app *application) sendTemplate(name string) error {
 		RecipientType:    "individual",
 		To:               phone,
 		Type:             "template",
-		Template: models.Template{
+		Text:             nil,
+		Template: &models.Template{
 			Name: name,
 			Language: models.Language{
 				Code: "ar",
@@ -33,6 +34,7 @@ func (app *application) sendTemplate(name string) error {
 		},
 	}
 	jsonData, err := json.Marshal(msg)
+	app.infoLog.Println(string(jsonData))
 	if err != nil {
 		return fmt.Errorf("couldn't marshal to json, error: %v", err)
 
