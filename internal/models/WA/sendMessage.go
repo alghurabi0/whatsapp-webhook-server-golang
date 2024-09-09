@@ -1,4 +1,4 @@
-package models
+package WA
 
 type SendMessage struct {
 	MessagingProduct string    `json:"messaging_product"`

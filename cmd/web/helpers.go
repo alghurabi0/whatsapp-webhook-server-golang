@@ -9,8 +9,21 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/alghurabi0/whatsapp-webhook-server-golang/internal/models"
+	"github.com/alghurabi0/whatsapp-webhook-server-golang/internal/models/WA"
 )
+
+func (app *application) unmarshal(r *http.Request, payload *WA.Payload) error {
+	body, err := io.ReadAll(r.Body)
+	if err != nil {
+		return fmt.Errorf("couldn't read body, error: %v", err)
+	}
+	app.infoLog.Println(string(body))
+	err = json.Unmarshal(body, &payload)
+	if err != nil {
+		return fmt.Errorf("failed to unmarshal json, error: %v", err)
+	}
+	return nil
+}
 
 func (app *application) sendTemplate(name string) error {
 	token := os.Getenv("ACCESS_TOKEN")
@@ -20,15 +33,15 @@ func (app *application) sendTemplate(name string) error {
 		return errors.New("empty access token")
 	}
 	phone := "9647802089950"
-	msg := &models.SendMessage{
+	msg := &WA.SendMessage{
 		MessagingProduct: "whatsapp",
 		RecipientType:    "individual",
 		To:               phone,
 		Type:             "template",
 		Text:             nil,
-		Template: &models.Template{
+		Template: &WA.Template{
 			Name: name,
-			Language: models.Language{
+			Language: WA.Language{
 				Code: "ar",
 			},
 		},
