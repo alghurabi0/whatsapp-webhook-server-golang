@@ -2,12 +2,13 @@ package main
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
 	"os"
 
-	"github.com/alghurabi0/whatsapp-webhook-server-golang/internal/models/WA"
+	"github.com/alghurabi0/whatsapp-webhook-server-golang/internal/models"
 )
 
 func (app *application) home(w http.ResponseWriter, r *http.Request) {
@@ -20,21 +21,48 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *application) processPayload(w http.ResponseWriter, r *http.Request) {
-	var payload WA.Payload
+	var payload models.Payload
 	err := app.unmarshal(r, &payload)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 	// determine message or status
-	if payload.HasMessages() && !payload.HasStatuses() {
+	info, err := app.validatePayload(&payload)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	ctx := context.Background()
+	contact := payload.Entry[0].Changes[0].Value.Contacts[0]
+	_, err = app.contact.Get(ctx, contact.WaId)
+	if err != nil {
+		c := &models.Contact{
+			WaId: contact.WaId,
+			Name: contact.Profile.Name,
+		}
+		_, err = app.contact.Create(ctx, c)
+		if err != nil {
+			http.Error(w, fmt.Sprintf("couldn't create new contact, err: %v\n", err), http.StatusInternalServerError)
+			return
+		}
+	}
+
+	if info == "msg" {
 		msgType := payload.Entry[0].Changes[0].Value.Messages[0].Type
 		// determine type or location, is there a referral?
 		switch msgType {
 		case "":
+			// determine if there is a location
 			break
 		case "text":
-			break
+			_, err = app.message.Create(ctx, &payload)
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+
 		case "reaction":
 			break
 		case "image":
@@ -46,11 +74,12 @@ func (app *application) processPayload(w http.ResponseWriter, r *http.Request) {
 		default:
 			break
 		}
-	} else if !payload.HasMessages() && payload.HasStatuses() {
+	} else if info == "status" {
 		// determine what to do with status
+		app.infoLog.Println("Staaaaatus")
 	} else {
-		http.Error(w, "payload doesn't contain messages or statuses", http.StatusBadRequest)
-		app.errorLog.Println("payload doesn't contain messages of statuses")
+		http.Error(w, "unexpected error", http.StatusBadRequest)
+		app.errorLog.Println("unexpected error")
 		app.errorLog.Println(payload)
 		return
 	}
@@ -66,13 +95,13 @@ func (app *application) sendMessage(w http.ResponseWriter, r *http.Request) {
 	}
 	phone := "9647802089950"
 	text := "mew mew mew weew"
-	msg := &WA.SendMessage{
+	msg := &models.SendMessage{
 		MessagingProduct: "whatsapp",
 		RecipientType:    "individual",
 		To:               phone,
 		Type:             "text",
 		Template:         nil,
-		Text: &WA.SendText{
+		Text: &models.SendText{
 			PreviewUrl: false,
 			Body:       text,
 		},
