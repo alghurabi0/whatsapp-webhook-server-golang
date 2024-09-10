@@ -56,7 +56,7 @@ type Message struct {
 	Reaction  Reaction `json:"reaction,omitempty" firestore:"reaction,omitempty"`
 	Image     Image    `json:"image,omitempty" firestore:"image,omitempty"`
 	Sticker   Sticker  `json:"sticker,omitempty" firestore:"sticker,omitempty"`
-	Location  Location `json:"location,omitempty" firestore:"location,omityempty"` // doesn't have a type field
+	Location  Location `json:"location,omitempty" firestore:"location,omitempty"` // doesn't have a type field
 	Button    Button   `json:"button,omitempty" firestore:"button,omitempty"`
 }
 
