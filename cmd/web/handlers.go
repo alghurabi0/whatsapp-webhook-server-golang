@@ -45,6 +45,8 @@ func (app *application) processPayload(w http.ResponseWriter, r *http.Request) {
 		_, err = app.contact.Create(ctx, c)
 		if err != nil {
 			http.Error(w, fmt.Sprintf("couldn't create new contact, err: %v\n", err), http.StatusInternalServerError)
+			app.errorLog.Println("couldn't create new contact")
+			app.errorLog.Println(err)
 			return
 		}
 	}
@@ -60,6 +62,8 @@ func (app *application) processPayload(w http.ResponseWriter, r *http.Request) {
 			_, err = app.message.Create(ctx, &payload)
 			if err != nil {
 				http.Error(w, err.Error(), http.StatusInternalServerError)
+				app.errorLog.Println("couldn't create new messages")
+				app.errorLog.Println(err)
 				return
 			}
 
