@@ -50,14 +50,14 @@ type Message struct {
 	From      string   `json:"from" firestore:"from"`
 	Timestamp string   `json:"timestamp" firestore:"timestamp"`
 	Type      string   `json:"type" firestore:"type"`
-	Context   Context  `json:"context"`
-	Referral  Referral `json:"refferal,omitempty"`
-	Text      Text     `json:"text,omitempty"`
-	Reaction  Reaction `json:"reaction,omitempty"`
-	Image     Image    `json:"image,omitempty"`
-	Sticker   Sticker  `json:"sticker,omitempty"`
-	Location  Location `json:"location,omitempty"` // doesn't have a type field
-	Button    Button   `json:"button,omitempty"`
+	Context   Context  `json:"context" firestore:"context,omitempty"`
+	Referral  Referral `json:"referral,omitempty" firestore:"referral,omitempty"`
+	Text      Text     `json:"text,omitempty" firestore:"text,omitempty"`
+	Reaction  Reaction `json:"reaction,omitempty" firestore:"reaction,omitempty"`
+	Image     Image    `json:"image,omitempty" firestore:"image,omitempty"`
+	Sticker   Sticker  `json:"sticker,omitempty" firestore:"sticker,omitempty"`
+	Location  Location `json:"location,omitempty" firestore:"location,omityempty"` // doesn't have a type field
+	Button    Button   `json:"button,omitempty" firestore:"button,omitempty"`
 }
 
 type Context struct {
