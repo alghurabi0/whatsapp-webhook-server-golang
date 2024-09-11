@@ -1,2 +1,6 @@
-{{ define "sidebar" }} {{ template "sidebar_header" . }} {{ template
-"sidebar_search" . }} {{ template "sidebar_chat_list" . }} {{ end }}
+{{ define "sidebar" }}
+<aside class="w-1/4 bg-white border-r border-gray-300">
+  {{ template "sidebar_header" . }} {{ template "sidebar_search" . }} {{
+  template "sidebar_chat_list" . }}
+</aside>
+{{ end }}

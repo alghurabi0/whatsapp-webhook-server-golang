@@ -16,8 +16,16 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 		app.infoLog.Println("not home")
 		return
 	}
-	app.infoLog.Println("welcome home")
-	w.Write([]byte("welcome home"))
+	ctx := context.Background()
+	contacts, err := app.contact.GetAll(ctx)
+	if err != nil {
+		app.serverError(w, err)
+		return
+	}
+
+	data := app.newTemplateData(r)
+	data.Contacts = contacts
+	app.render(w, http.StatusOK, "home.tmpl.html", data)
 }
 
 func (app *application) processPayload(w http.ResponseWriter, r *http.Request) {
@@ -105,7 +113,7 @@ func (app *application) sendMessage(w http.ResponseWriter, r *http.Request) {
 		To:               phone,
 		Type:             "text",
 		Template:         nil,
-		Text: &models.SendText{
+		Text: &models.Text{
 			PreviewUrl: false,
 			Body:       text,
 		},

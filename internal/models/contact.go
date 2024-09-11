@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"cloud.google.com/go/firestore"
+	"google.golang.org/api/iterator"
 )
 
 type ContactModel struct {
@@ -22,6 +23,27 @@ func (c *ContactModel) Get(ctx context.Context, wa_id string) (*Contact, error) 
 	}
 	contact.WaId = doc.Ref.ID
 	return &contact, nil
+}
+
+func (c *ContactModel) GetAll(ctx context.Context) (*[]Contact, error) {
+	docsIter := c.DB.Collection("contacts").Documents(ctx)
+	var items []Contact
+	for {
+		doc, err := docsIter.Next()
+		if err == iterator.Done {
+			break
+		}
+		if err != nil {
+			return nil, err
+		}
+		var item Contact
+		if err := doc.DataTo(&item); err != nil {
+			return nil, err
+		}
+		item.WaId = doc.Ref.ID
+		items = append(items, item)
+	}
+	return &items, nil
 }
 
 func (c *ContactModel) Create(ctx context.Context, contact *Contact) (string, error) {

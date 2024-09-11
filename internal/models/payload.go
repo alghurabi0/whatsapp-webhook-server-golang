@@ -78,38 +78,59 @@ type Referral struct {
 }
 
 type Text struct {
-	Body string `json:"body"`
+	Body       string `json:"body" firestore:"body"`
+	PreviewUrl bool   `json:"preview_url,omitempty" firestore:"preview_url"`
 }
 
 type Reaction struct {
-	Emoji     string `json:"emoji"`
-	MessageId string `json:"message_id"`
+	Emoji     string `json:"emoji" firestore:"emoji"`
+	MessageId string `json:"message_id" firestore:"message_id"`
 }
 
 type Image struct {
-	Caption  string `json:"caption"`
-	MimeType string `json:"mime_type"`
-	Sha256   string `json:"sha256"`
-	Id       string `json:"id"`
+	Caption  string `json:"caption,omitempty" firestore:"caption"`
+	MimeType string `json:"mime_type,omitempty" firestore:"mime_type"`
+	Sha256   string `json:"sha256,omitempty" firestore:"sha256"`
+	Id       string `json:"id,omitempty" firestore:"id"`
+	Link     string `json:"link,omitempty" firestore:"link"`
 }
 
 type Sticker struct {
-	Id       string `json:"id"`
-	Animated bool   `json:"animated"`
-	MimeType string `json:"mime_type"`
-	Sha256   string `json:"sha256"`
+	Id       string `json:"id,omitempty" firestore:"id"`
+	Link     string `json:"link,omitempty" firestore:"link"`
+	Animated bool   `json:"animated,omitempty" firestore:"animated"`
+	MimeType string `json:"mime_type,omitempty" firestore:"mime_type"`
+	Sha256   string `json:"sha256,omitempty" firestore:"sha256"`
 }
 
 type Location struct {
-	Latitude  string `json:"latitude"`
-	Longitude string `json:"longitude"`
-	Name      string `json:"name"`
-	Address   string `json:"address"`
+	Latitude  string `json:"latitude,omitempty" firestore:"latitude"`
+	Longitude string `json:"longitude,omitempty" firestore:"longitude"`
+	Name      string `json:"name,omitempty" firestore:"name"`
+	Address   string `json:"address,omitempty" firestore:"address"`
 }
 
 type Button struct {
 	Text    string `json:"text"`
 	Payload string `json:"payload"`
+}
+
+type Audio struct {
+	Id   string `json:"id,omitempty" firestore:"id"`
+	Link string `json:"link,omitempty" firestore:"link"`
+}
+
+type Document struct {
+	Caption  string `json:"caption,omitempty" firestore:"caption"`
+	Link     string `json:"link,omitempty" firestore:"link"`
+	Id       string `json:"id,omitempty" firestore:"id"`
+	Filename string `json:"filename,omitempty" firestore:"filename"`
+}
+
+type Video struct {
+	Caption string `json:"caption,omitempty" firestore:"caption"`
+	Link    string `json:"link,omitempty" firestore:"link"`
+	Id      string `json:"id,omitempty" firestore:"id"`
 }
 
 func (p *Payload) HasMessages() bool {

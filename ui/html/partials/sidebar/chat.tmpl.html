@@ -1,8 +1,8 @@
 {{ define "sidebar_chat_list" }}
 <div class="overflow-y-auto h-[calc(100vh-120px)]">
-  {{ template "sidebar_chat_item" . }}
+  {{ range .Contacts }} {{ template "sidebar_chat_item" . }} {{ end }}
 </div>
-{{ end }} {{ define "sidebar_chat_item }}
+{{ end }} {{ define "sidebar_chat_item" }}
 <div class="flex items-center p-3 hover:bg-gray-100 cursor-pointer">
   <div
     class="w-12 h-12 rounded-full bg-gray-300 flex items-center justify-center mr-3"
@@ -10,7 +10,7 @@
     <i class="ri-user-3-line text-gray-600"></i>
   </div>
   <div>
-    <p class="font-semibold">Contact Name</p>
+    <p class="font-semibold">{{ .Name }}</p>
     <p class="text-sm text-gray-500">Last message...</p>
   </div>
 </div>

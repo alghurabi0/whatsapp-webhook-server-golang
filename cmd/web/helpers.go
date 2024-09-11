@@ -8,6 +8,7 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"runtime/debug"
 
 	"github.com/alghurabi0/whatsapp-webhook-server-golang/internal/models"
 )
@@ -98,4 +99,23 @@ func (app *application) sendTemplate(name string) error {
 	app.infoLog.Println(string(body))
 
 	return nil
+}
+
+func (app *application) serverError(w http.ResponseWriter, err error) {
+	trace := fmt.Sprintf("%s\n%s", err.Error(), debug.Stack())
+	app.errorLog.Output(2, trace)
+
+	http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+}
+
+func (app *application) clientError(w http.ResponseWriter, status int) {
+	http.Error(w, http.StatusText(status), status)
+}
+
+func (app *application) notFound(w http.ResponseWriter) {
+	app.clientError(w, http.StatusNotFound)
+}
+
+func (app *application) newTemplateData(r *http.Request) *templateData {
+	return &templateData{}
 }

@@ -1,3 +1,4 @@
+{{ define "base" }}
 <!doctype html>
 <html lang="en">
   <head>
@@ -12,6 +13,7 @@
   </head>
 
   <body class="bg-gray-100">
-    <div class="flex h-screen">{{ template main . }}</div>
+    <div class="flex h-screen">{{ template "main" . }}</div>
   </body>
 </html>
+{{ end }}

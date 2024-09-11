@@ -4,6 +4,7 @@ import (
 	"context"
 	"flag"
 	"fmt"
+	"html/template"
 	"log"
 	"net/http"
 	"os"
@@ -15,10 +16,11 @@ import (
 )
 
 type application struct {
-	infoLog  *log.Logger
-	errorLog *log.Logger
-	contact  *models.ContactModel
-	message  *models.MessageModel
+	infoLog       *log.Logger
+	errorLog      *log.Logger
+	templateCache map[string]*template.Template
+	contact       *models.ContactModel
+	message       *models.MessageModel
 }
 
 func main() {
@@ -26,16 +28,21 @@ func main() {
 	credFile := flag.String("cred-file", "./internal/whatsapp-3a492-firebase-adminsdk-wd7lf-7f8138bbd2.json", "Path to the credentials file")
 	infoLog := log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
 	errorLog := log.New(os.Stderr, "Error\t", log.Ldate|log.Ltime|log.Lshortfile)
+	templateCache, err := newTemplateCache()
+	if err != nil {
+		errorLog.Fatal(err)
+	}
 	db, err := initDB(context.Background(), *credFile)
 	if err != nil {
 		errorLog.Fatalf("coldn't init db, err: %v\n", err)
 	}
 
 	app := &application{
-		infoLog:  infoLog,
-		errorLog: errorLog,
-		contact:  &models.ContactModel{DB: db},
-		message:  &models.MessageModel{DB: db},
+		infoLog:       infoLog,
+		errorLog:      errorLog,
+		templateCache: templateCache,
+		contact:       &models.ContactModel{DB: db},
+		message:       &models.MessageModel{DB: db},
 	}
 	srv := http.Server{
 		Handler:  app.routes(),
