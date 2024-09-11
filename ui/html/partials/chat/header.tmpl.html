@@ -1,0 +1,18 @@
+{{ define "chat_header" }}
+<div class="bg-gray-200 p-4 flex justify-between items-center">
+  <div class="flex items-center">
+    <div
+      class="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center mr-3"
+    >
+      <i class="ri-user-3-line text-gray-600"></i>
+    </div>
+    <div class="flex flex-col">
+    <span class="font-semibold">{{ .Name }}</span>
+    <span>{{ .WaId }}</span>
+    </div>
+  </div>
+  <button class="text-gray-600 hover:bg-gray-300 rounded-full p-2">
+    <i class="ri-more-2-fill"></i>
+  </button>
+</div>
+{{ end }}

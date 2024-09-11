@@ -65,6 +65,18 @@ type Context struct {
 	Id   string `json:"id"`
 }
 
+type Referral struct {
+	SourceUrl    string `json:"source_url"`
+	SourceId     string `json:"source_id"`
+	SourceType   string `json:"source_type"`
+	Headline     string `json:"headline"`
+	Body         string `json:"body"`
+	MediaType    string `json:"media_type"`
+	ImageUrl     string `json:"image_url"`
+	VideoUrl     string `json:"video_url"`
+	ThumbnailUrl string `json:"thumbnail_url"`
+}
+
 type Text struct {
 	Body string `json:"body"`
 }
@@ -93,18 +105,6 @@ type Location struct {
 	Longitude string `json:"longitude"`
 	Name      string `json:"name"`
 	Address   string `json:"address"`
-}
-
-type Referral struct {
-	SourceUrl    string `json:"source_url"`
-	SourceId     string `json:"source_id"`
-	SourceType   string `json:"source_type"`
-	Headline     string `json:"headline"`
-	Body         string `json:"body"`
-	MediaType    string `json:"media_type"`
-	ImageUrl     string `json:"image_url"`
-	VideoUrl     string `json:"video_url"`
-	ThumbnailUrl string `json:"thumbnail_url"`
 }
 
 type Button struct {
