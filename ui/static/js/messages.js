@@ -21,23 +21,20 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-document.addEventListener("htmx:afterRequest", () => {
-    console.log("dsdf");
-    const wa_id = document.querySelector("#wa_id").innerText
-    console.log(wa_id);
-    const q = query(collection(db, `contacts/${wa_id}/messages`),)
-    onSnapshot(q, (snapshot) => {
-        snapshot.docChanges().forEach((change) => {
-            if (change.type == "added") {
-                console.log("added")
-                console.log(change.doc.data());
-            } else if (change.type == "modified") {
-                console.log("modified")
-                console.log(change.doc.data());
-            } else if (change.type == "removed") {
-                console.log("removed")
-                console.log(change.doc.data());
-            }
-        });
+const wa_id = document.querySelector("#wa_id").innerText
+console.log(wa_id);
+const q = query(collection(db, `contacts/${wa_id}/messages`),)
+onSnapshot(q, (snapshot) => {
+    snapshot.docChanges().forEach((change) => {
+        if (change.type == "added") {
+            console.log("added")
+            console.log(change.doc.data());
+        } else if (change.type == "modified") {
+            console.log("modified")
+            console.log(change.doc.data());
+        } else if (change.type == "removed") {
+            console.log("removed")
+            console.log(change.doc.data());
+        }
     });
 });
