@@ -165,3 +165,29 @@ func (app *application) verifyHook(w http.ResponseWriter, r *http.Request) {
 		app.infoLog.Println("webhook verified successfully")
 	}
 }
+
+func (app *application) chat(w http.ResponseWriter, r *http.Request) {
+	err := r.ParseForm()
+	if err != nil {
+		app.clientError(w, http.StatusBadRequest)
+		return
+	}
+	name := r.FormValue("name")
+	if name == "" {
+		http.Error(w, "empty name", http.StatusBadRequest)
+		return
+	}
+	wa_id := r.FormValue("wa_id")
+	if wa_id == "" {
+		http.Error(w, "empty wa_id", http.StatusBadRequest)
+		return
+	}
+	contact := &models.Contact{
+		Name: name,
+		WaId: wa_id,
+	}
+
+	data := app.newTemplateData(r)
+	data.Contact = contact
+	app.renderPart(w, http.StatusOK, "chat.tmpl.html", "chat", data)
+}

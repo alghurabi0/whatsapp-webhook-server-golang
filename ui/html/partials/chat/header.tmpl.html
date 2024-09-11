@@ -7,8 +7,8 @@
       <i class="ri-user-3-line text-gray-600"></i>
     </div>
     <div class="flex flex-col">
-    <span class="font-semibold">Current Chat</span>
-    <span>01234556789</span>
+      <span class="font-semibold">{{ .Contact.Name }}</span>
+      <span id="wa_id">{{ .Contact.WaId }}</span>
     </div>
   </div>
   <button class="text-gray-600 hover:bg-gray-300 rounded-full p-2">

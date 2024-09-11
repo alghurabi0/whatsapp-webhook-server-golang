@@ -3,7 +3,13 @@
   {{ range .Contacts }} {{ template "sidebar_chat_item" . }} {{ end }}
 </div>
 {{ end }} {{ define "sidebar_chat_item" }}
-<div class="flex items-center p-3 hover:bg-gray-100 cursor-pointer">
+<div
+  class="flex items-center p-3 hover:bg-gray-100 cursor-pointer"
+  hx-get="/chat"
+  hx-target=".chat"
+  hx-swap="innerHTML"
+  hx-vals='{"name": "{{.Name}}", "wa_id": "{{.WaId}}"}'
+>
   <div
     class="w-12 h-12 rounded-full bg-gray-300 flex items-center justify-center mr-3"
   >
