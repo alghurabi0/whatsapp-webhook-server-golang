@@ -29,6 +29,7 @@ onSnapshot(q, (snapshot) => {
         if (change.type == "added") {
             console.log("added")
             console.log(change.doc.data());
+            createMessage(change.doc.data());
         } else if (change.type == "modified") {
             console.log("modified")
             console.log(change.doc.data());
@@ -38,3 +39,35 @@ onSnapshot(q, (snapshot) => {
         }
     });
 });
+
+function getMessageTemplate() {
+    let message = document.createElement('div');
+    message.id = 'message';
+    message.classList.add('max-w-[70%]', 'rounded-lg', 'p-3', 'mb-2');
+
+    let content = document.createElement('p');
+    content.id = 'message_content';
+    message.appendChild(content);
+
+    let timestamp = document.createElement('p');
+    timestamp.id = 'message_timestamp';
+    timestamp.classList.add('text-xs', 'text-gray-500', 'text-right', 'mt-1');
+    message.appendChild(timestamp);
+
+    return message;
+}
+
+function createMessage(data) {
+    const message = document.querySelector("#messages");
+    let msgTmpl = getMessageTemplate();
+    if (data.to) {
+        msgTmpl.classList.add('bg-green-100', 'ml-auto');
+    } else if (data.from) {
+        msgTmpl.classList.add('bg-white');
+    }
+    let content = msgTmpl.querySelector("#message_content");
+    let timestamp = msgTmpl.querySelector("#message_timestamp");
+    content.textContent = data.text.body;
+    timestamp.textContent = data.timestamp;
+    message.appendChild(msgTmpl);
+}

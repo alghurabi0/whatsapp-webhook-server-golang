@@ -10,8 +10,8 @@ func (app *application) routes() http.Handler {
 	mux.HandleFunc("GET /", app.home)
 	mux.HandleFunc("GET /webhook", app.verifyHook)
 	mux.HandleFunc("POST /webhook", app.processPayload)
-	mux.HandleFunc("POST /send", app.sendMessage)
 
 	mux.HandleFunc("GET /chat", app.chat)
+	mux.HandleFunc("POST /message", app.sendMessage)
 	return mux
 }

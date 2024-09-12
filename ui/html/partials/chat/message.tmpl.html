@@ -1,14 +1,9 @@
 {{ define "message_list" }}
-<div class="flex-1 overflow-y-auto p-4 bg-[#e5ddd5]">
-  {{ template "message" . }}
+<div class="flex-1 overflow-y-auto p-4 bg-[#e5ddd5]" id="messages">
 </div>
 {{ end }} {{ define "message" }}
-<div class="max-w-[70%] rounded-lg p-3 mb-2 bg-white">
-  <p>This is a received message.</p>
-  <p class="text-xs text-gray-500 text-right mt-1">12:34 PM</p>
-</div>
-<div class="max-w-[70%] rounded-lg p-3 mb-2 bg-green-100 ml-auto">
-  <p>This is a sent message.</p>
-  <p class="text-xs text-gray-500 text-right mt-1">12:35 PM</p>
+<div class="max-w-[70%] rounded-lg p-3 mb-2 bg-white" id="message">
+  <p id="message_content">This is a received message.</p>
+  <p class="text-xs text-gray-500 text-right mt-1" id="message_timestamp">12:34 PM</p>
 </div>
 {{ end }}

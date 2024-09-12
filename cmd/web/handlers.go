@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 	"os"
 
@@ -67,7 +68,9 @@ func (app *application) processPayload(w http.ResponseWriter, r *http.Request) {
 			// determine if there is a location
 			break
 		case "text":
-			_, err = app.message.Create(ctx, &payload)
+			msg := payload.Entry[0].Changes[0].Value.Messages[0]
+			wa_id := payload.Entry[0].Changes[0].Value.Contacts[0].WaId
+			_, err = app.message.Create(ctx, wa_id, &msg)
 			if err != nil {
 				http.Error(w, err.Error(), http.StatusInternalServerError)
 				app.errorLog.Println("couldn't create new messages")
@@ -105,15 +108,28 @@ func (app *application) sendMessage(w http.ResponseWriter, r *http.Request) {
 		app.errorLog.Fatal("empty ACCESS_TOKEN")
 		return
 	}
-	phone := "9647802089950"
-	text := "mew mew mew weew"
-	msg := &models.SendMessage{
+	err := r.ParseForm()
+	if err != nil {
+		app.serverError(w, err)
+		return
+	}
+
+	wa_id := r.FormValue("wa_id")
+	if wa_id == "" {
+		http.Error(w, "empty wa_id", http.StatusBadRequest)
+		return
+	}
+	text := r.FormValue("message_content")
+	if wa_id == "" {
+		http.Error(w, "empty message_content", http.StatusBadRequest)
+		return
+	}
+	msg := &models.Message{
 		MessagingProduct: "whatsapp",
 		RecipientType:    "individual",
-		To:               phone,
+		To:               wa_id,
 		Type:             "text",
-		Template:         nil,
-		Text: &models.Text{
+		Text: models.Text{
 			PreviewUrl: false,
 			Body:       text,
 		},
@@ -140,7 +156,20 @@ func (app *application) sendMessage(w http.ResponseWriter, r *http.Request) {
 	}
 
 	defer res.Body.Close()
+	body, err := io.ReadAll(r.Body)
+	if err != nil {
+		app.errorLog.Fatal(err)
+		return
+	}
+
 	app.infoLog.Printf("message status: %s\n", res.Status)
+	ctx := context.Background()
+	_, err = app.message.Create(ctx, wa_id, msg)
+	if err != nil {
+		app.serverError(w, err)
+		return
+	}
+	w.WriteHeader(http.StatusOK)
 }
 
 func (app *application) verifyHook(w http.ResponseWriter, r *http.Request) {
