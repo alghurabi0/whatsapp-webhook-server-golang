@@ -3,6 +3,7 @@
   class="bg-gray-200 p-4 flex items-center"
   hx-post="/message"
   hx-trigger="submit"
+  hx-swap="none"
   hx-vals='{"wa_id": "{{.Contact.WaId}}"}'
 >
   <button class="text-gray-600 hover:bg-gray-300 rounded-full p-2">

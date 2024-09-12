@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+tmux new-window -n "web" -c "./cmd/web"
+tmux new-window -n "models" -c "./internal/models"
+tmux new-window -n "html" -c "./ui/html"
+tmux new-window -n "static" -c "./ui/static"
+tmux new-window -n "etc"
