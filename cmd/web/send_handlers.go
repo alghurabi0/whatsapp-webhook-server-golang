@@ -74,6 +74,7 @@ func (app *application) sendMessage(w http.ResponseWriter, r *http.Request) {
 		app.errorLog.Fatal(err)
 		return
 	}
+	app.infoLog.Println(string(body))
 	var result map[string]interface{}
 	err = json.Unmarshal(body, &result)
 	if err != nil {
