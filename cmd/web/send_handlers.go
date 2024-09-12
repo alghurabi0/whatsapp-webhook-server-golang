@@ -80,7 +80,7 @@ func (app *application) sendMessage(w http.ResponseWriter, r *http.Request) {
 
 	defer res.Body.Close()
 	app.infoLog.Printf("message status: %s\n", res.Status)
-	body, err := io.ReadAll(r.Body)
+	body, err := io.ReadAll(res.Body)
 	if err != nil {
 		app.errorLog.Fatal(err)
 		return
