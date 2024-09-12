@@ -14,12 +14,15 @@ import (
 
 func (app *application) sendMessage(w http.ResponseWriter, r *http.Request) {
 	token := os.Getenv("ACCESS_TOKEN")
-	phone_number_id := os.Getenv("PHONE_NUMBER_ID")
-	url := fmt.Sprintf("https://graph.facebook.com/v20.0/%s/messages", phone_number_id)
 	if token == "" {
 		app.errorLog.Fatal("empty ACCESS_TOKEN")
 		return
 	}
+	phone_number_id := os.Getenv("PHONE_NUMBER_ID")
+	if phone_number_id == "" {
+		app.errorLog.Fatal("empty phone number id")
+	}
+	url := fmt.Sprintf("https://graph.facebook.com/v20.0/%s/messages", phone_number_id)
 	err := r.ParseForm()
 	if err != nil {
 		app.serverError(w, err)
@@ -51,6 +54,7 @@ func (app *application) sendMessage(w http.ResponseWriter, r *http.Request) {
 		app.errorLog.Printf("couldn't marshal to json, error: %v\n", err)
 		return
 	}
+	app.infoLog.Println(string(jsonData))
 
 	req, err := http.NewRequest("POST", url, bytes.NewBuffer(jsonData))
 	if err != nil {
