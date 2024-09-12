@@ -62,3 +62,18 @@ type DateTime struct {
 	Minute        int    `json:"minute,omitempty" firestore:"minute"`
 	Calendar      string `json:"calendar,omitempty" firestore:"calendar"`
 }
+
+type Response struct {
+	MessagingProduct string    `json:"messaging_product"`
+	Contacts         []ResCont `json:"contacts"`
+	Messages         []ResMsg  `json:"messages"`
+}
+
+type ResCont struct {
+	Input string `json:"input"`
+	WaId  string `json:"wa_id"`
+}
+
+type ResMsg struct {
+	Id string `json:"id"`
+}

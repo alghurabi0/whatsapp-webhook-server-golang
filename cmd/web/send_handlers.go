@@ -86,34 +86,15 @@ func (app *application) sendMessage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	app.infoLog.Println(string(body))
-	var result map[string]interface{}
+	result := &models.Response{}
 	err = json.Unmarshal(body, &result)
 	if err != nil {
 		app.errorLog.Printf("failed to unmarshal response: %v\n", err)
 		return
 	}
+	app.infoLog.Printf("Response struct: %v\n", result)
 
-	// Accessing messages[0].id
-	messages, ok := result["messages"].([]interface{})
-	if !ok || len(messages) == 0 {
-		app.errorLog.Println("No messages found in response or incorrect format")
-		return
-	}
-
-	// Assuming the message is a map
-	firstMessage, ok := messages[0].(map[string]interface{})
-	if !ok {
-		app.errorLog.Println("First message is not in the expected format")
-		return
-	}
-
-	// Access the "id" field
-	messageID, ok := firstMessage["id"].(string)
-	if !ok {
-		app.errorLog.Println("Message ID not found or is not a string")
-		return
-	}
-	msg.Id = messageID
+	msg.Id = result.Messages[0].Id
 
 	ctx := context.Background()
 	_, err = app.message.Create(ctx, wa_id, msg)
