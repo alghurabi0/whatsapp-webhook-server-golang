@@ -18,7 +18,7 @@ type Change struct {
 type Value struct {
 	MessagingProduct string    `json:"messaging_product"`
 	Metadata         Metadata  `json:"metadata"`
-	Contacts         []Contact `json:"contacts"`
+	Contacts         []Contact `json:"contacts,omitempty"`
 	Messages         []Message `json:"messages,omitempty"`
 	Statuses         []Status  `json:"statuses,omitempty"`
 }

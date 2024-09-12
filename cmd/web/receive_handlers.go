@@ -23,23 +23,23 @@ func (app *application) processPayload(w http.ResponseWriter, r *http.Request) {
 	}
 
 	ctx := context.Background()
-	contact := payload.Entry[0].Changes[0].Value.Contacts[0]
-	_, err = app.contact.Get(ctx, contact.WaId)
-	if err != nil {
-		c := &models.Contact{
-			WaId: contact.WaId,
-			Name: contact.Profile.Name,
-		}
-		_, err = app.contact.Create(ctx, c)
-		if err != nil {
-			http.Error(w, fmt.Sprintf("couldn't create new contact, err: %v\n", err), http.StatusInternalServerError)
-			app.errorLog.Println("couldn't create new contact")
-			app.errorLog.Println(err)
-			return
-		}
-	}
 
 	if info == "msg" {
+		contact := payload.Entry[0].Changes[0].Value.Contacts[0]
+		_, err = app.contact.Get(ctx, contact.WaId)
+		if err != nil {
+			c := &models.Contact{
+				WaId: contact.WaId,
+				Name: contact.Profile.Name,
+			}
+			_, err = app.contact.Create(ctx, c)
+			if err != nil {
+				http.Error(w, fmt.Sprintf("couldn't create new contact, err: %v\n", err), http.StatusInternalServerError)
+				app.errorLog.Println("couldn't create new contact")
+				app.errorLog.Println(err)
+				return
+			}
+		}
 		msgType := payload.Entry[0].Changes[0].Value.Messages[0].Type
 		// determine type or location, is there a referral?
 		switch msgType {
