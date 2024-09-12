@@ -46,21 +46,21 @@ type Status struct {
 }
 
 type Message struct {
-	Id               string   `json:"id,omitempty" firestore:"-"`
-	From             string   `json:"from,omitempty" firestore:"from"`
-	To               string   `json:"to,omitempty" firestore:"to"`
-	Timestamp        string   `json:"timestamp,omitempty" firestore:"timestamp"`
-	Type             string   `json:"type" firestore:"type"`
-	MessagingProduct string   `json:"messaging_product,omitempty" firestore:"messaging_product"`
-	RecipientType    string   `json:"recipient_type,omitempty" firestore:"recipient_type"`
-	Context          Context  `json:"context,omitempty" firestore:"context,omitempty"`
-	Referral         Referral `json:"referral,omitempty" firestore:"referral,omitempty"`
-	Text             Text     `json:"text,omitempty" firestore:"text,omitempty"`
-	Reaction         Reaction `json:"reaction,omitempty" firestore:"reaction,omitempty"`
-	Image            Image    `json:"image,omitempty" firestore:"image,omitempty"`
-	Sticker          Sticker  `json:"sticker,omitempty" firestore:"sticker,omitempty"`
-	Location         Location `json:"location,omitempty" firestore:"location,omitempty"` // doesn't have a type field
-	Button           Button   `json:"button,omitempty" firestore:"button,omitempty"`
+	Id               string    `json:"id,omitempty" firestore:"-"`
+	From             string    `json:"from,omitempty" firestore:"from"`
+	To               string    `json:"to,omitempty" firestore:"to"`
+	Timestamp        string    `json:"timestamp,omitempty" firestore:"timestamp"`
+	Type             string    `json:"type" firestore:"type"`
+	MessagingProduct string    `json:"messaging_product,omitempty" firestore:"messaging_product"`
+	RecipientType    string    `json:"recipient_type,omitempty" firestore:"recipient_type"`
+	Context          *Context  `json:"context,omitempty" firestore:"context,omitempty"`
+	Referral         *Referral `json:"referral,omitempty" firestore:"referral,omitempty"`
+	Text             *Text     `json:"text,omitempty" firestore:"text,omitempty"`
+	Reaction         *Reaction `json:"reaction,omitempty" firestore:"reaction,omitempty"`
+	Image            *Image    `json:"image,omitempty" firestore:"image,omitempty"`
+	Sticker          *Sticker  `json:"sticker,omitempty" firestore:"sticker,omitempty"`
+	Location         *Location `json:"location,omitempty" firestore:"location,omitempty"` // doesn't have a type field
+	Button           *Button   `json:"button,omitempty" firestore:"button,omitempty"`
 }
 
 type Context struct {

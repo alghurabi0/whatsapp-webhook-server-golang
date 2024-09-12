@@ -44,10 +44,17 @@ func (app *application) sendMessage(w http.ResponseWriter, r *http.Request) {
 		RecipientType:    "individual",
 		To:               wa_id,
 		Type:             "text",
-		Text: models.Text{
+		Text: &models.Text{
 			PreviewUrl: false,
 			Body:       text,
 		},
+		Context:  nil,
+		Referral: nil,
+		Reaction: nil,
+		Image:    nil,
+		Sticker:  nil,
+		Location: nil,
+		Button:   nil,
 	}
 	jsonData, err := json.Marshal(msg)
 	if err != nil {
