@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -13,7 +14,7 @@ import (
 	"github.com/alghurabi0/whatsapp-webhook-server-golang/internal/models"
 )
 
-func (app *application) unmarshal(r *http.Request, payload *models.Payload) error {
+func (app *application) unmarshalPayload(r *http.Request, payload *models.Payload) error {
 	body, err := io.ReadAll(r.Body)
 	if err != nil {
 		return fmt.Errorf("couldn't read body, error: %v", err)
@@ -47,6 +48,59 @@ func (app *application) validatePayload(payload *models.Payload) (string, error)
 	} else {
 		return "other", errors.New("payload doens't contain messages or statuses")
 	}
+}
+
+func (app *application) getOrCreateContact(ctx context.Context, payload *models.Payload) error {
+	contact := payload.Entry[0].Changes[0].Value.Contacts[0]
+	_, err := app.contact.Get(ctx, contact.WaId)
+	if err != nil {
+		c := &models.Contact{
+			WaId: contact.WaId,
+			Name: contact.Profile.Name,
+		}
+		_, err = app.contact.Create(ctx, c)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func (app *application) saveMessage(ctx context.Context, payload *models.Payload) error {
+	msg := payload.Entry[0].Changes[0].Value.Messages[0]
+	msgType := payload.Entry[0].Changes[0].Value.Messages[0].Type
+	wa_id := payload.Entry[0].Changes[0].Value.Contacts[0].WaId
+
+	// determine type or location, is there a referral?
+	switch msgType {
+	case "":
+		// determine if there is a location
+		break
+	case "text":
+		err := app.saveTextMessage(ctx, &msg, wa_id)
+		if err != nil {
+			return err
+		}
+	case "reaction":
+		break
+	case "image":
+		break
+	case "sticker":
+		break
+	case "button":
+		break
+	default:
+		break
+	}
+	return nil
+}
+
+func (app *application) saveTextMessage(ctx context.Context, msg *models.Message, wa_id string) error {
+	_, err := app.message.Create(ctx, wa_id, msg)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func (app *application) sendTemplate(name string) error {

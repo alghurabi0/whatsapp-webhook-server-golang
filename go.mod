@@ -5,6 +5,7 @@ go 1.22.2
 require (
 	cloud.google.com/go/firestore v1.16.0
 	firebase.google.com/go v3.13.0+incompatible
+	github.com/justinas/alice v1.2.0
 	google.golang.org/api v0.196.0
 )
 

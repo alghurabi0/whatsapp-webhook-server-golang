@@ -1,6 +1,10 @@
 package main
 
-import "net/http"
+import (
+	"net/http"
+
+	"github.com/justinas/alice"
+)
 
 func (app *application) routes() http.Handler {
 	mux := http.NewServeMux()
@@ -13,5 +17,7 @@ func (app *application) routes() http.Handler {
 
 	mux.HandleFunc("GET /chat", app.chat)
 	mux.HandleFunc("POST /message", app.sendMessage)
-	return mux
+
+	standard := alice.New(app.recoverPanic, app.logRequest)
+	return standard.Then(mux)
 }
