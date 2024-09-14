@@ -16,11 +16,13 @@ import (
 )
 
 type application struct {
-	infoLog       *log.Logger
-	errorLog      *log.Logger
-	templateCache map[string]*template.Template
-	contact       *models.ContactModel
-	message       *models.MessageModel
+	infoLog         *log.Logger
+	errorLog        *log.Logger
+	templateCache   map[string]*template.Template
+	contact         *models.ContactModel
+	message         *models.MessageModel
+	token           string
+	phone_number_id string
 }
 
 func main() {
@@ -36,13 +38,23 @@ func main() {
 	if err != nil {
 		errorLog.Fatalf("coldn't init db, err: %v\n", err)
 	}
+	token := os.Getenv("ACCESS_TOKEN")
+	if token == "" {
+		errorLog.Fatal("empty access token")
+	}
+	phone_number_id := os.Getenv("PHONE_NUMBER_ID")
+	if phone_number_id == "" {
+		errorLog.Fatal("empty phone number id")
+	}
 
 	app := &application{
-		infoLog:       infoLog,
-		errorLog:      errorLog,
-		templateCache: templateCache,
-		contact:       &models.ContactModel{DB: db},
-		message:       &models.MessageModel{DB: db},
+		infoLog:         infoLog,
+		errorLog:        errorLog,
+		templateCache:   templateCache,
+		contact:         &models.ContactModel{DB: db},
+		message:         &models.MessageModel{DB: db},
+		token:           token,
+		phone_number_id: phone_number_id,
 	}
 	srv := http.Server{
 		Handler:  app.routes(),

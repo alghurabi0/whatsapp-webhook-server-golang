@@ -64,16 +64,31 @@ type DateTime struct {
 }
 
 type Response struct {
-	MessagingProduct string    `json:"messaging_product"`
-	Contacts         []ResCont `json:"contacts"`
-	Messages         []ResMsg  `json:"messages"`
+	MessagingProduct string    `json:"messaging_product,omitempty"`
+	Contacts         []ResCont `json:"contacts,omitempty"`
+	Messages         []ResMsg  `json:"messages,omitempty"`
+	Error            *Error    `json:"error,omitempty"`
 }
 
 type ResCont struct {
-	Input string `json:"input"`
-	WaId  string `json:"wa_id"`
+	Input string `json:"input,omitempty"`
+	WaId  string `json:"wa_id,omitempty"`
 }
 
 type ResMsg struct {
-	Id string `json:"id"`
+	Id     string  `json:"id,omitempty"`
+	Errors []Error `json:"errors"`
+}
+
+type Error struct {
+	Message   string     `json:"message,omitempty"`
+	Type      string     `json:"type,omitempty"`
+	Code      int        `json:"code,omitempty"`
+	FbTraceId string     `json:"fbtrace_id,omitempty"`
+	ErrorData *ErrorData `json:"error_data,omitempty"`
+}
+
+type ErrorData struct {
+	MessagingProduct string `json:"messaging_product,omitempty"`
+	Details          string `json:"details,omitempty"`
 }
