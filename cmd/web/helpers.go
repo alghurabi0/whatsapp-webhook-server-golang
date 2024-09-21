@@ -66,6 +66,16 @@ func (app *application) getOrCreateContact(ctx context.Context, payload *models.
 	return nil
 }
 
+func (app *application) saveStatus(ctx context.Context, payload *models.Payload) error {
+	status := payload.Entry[0].Changes[0].Value.Statuses[0]
+	_, err := app.status.Create(ctx, &status)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (app *application) saveMessage(ctx context.Context, payload *models.Payload) error {
 	msg := payload.Entry[0].Changes[0].Value.Messages[0]
 	msgType := payload.Entry[0].Changes[0].Value.Messages[0].Type

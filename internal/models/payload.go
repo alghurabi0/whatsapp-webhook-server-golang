@@ -39,10 +39,11 @@ type Profile struct {
 }
 
 type Status struct {
-	Id          string `json:"id"`
-	Status      string `json:"status"`
-	Timestamp   string `json:"timestamp"`
-	RecipientId string `json:"recipient_id"`
+	Id          string  `json:"id" firestore:"-"`
+	Status      string  `json:"status" firestore:"status"`
+	Timestamp   string  `json:"timestamp" firestore:"timestamp"`
+	RecipientId string  `json:"recipient_id" firestore:"-"`
+	Errors      []Error `json:"errors,omitempty" firestore:"errors"`
 }
 
 type Message struct {

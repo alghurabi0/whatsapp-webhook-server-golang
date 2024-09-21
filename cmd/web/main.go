@@ -21,6 +21,7 @@ type application struct {
 	templateCache   map[string]*template.Template
 	contact         *models.ContactModel
 	message         *models.MessageModel
+	status          *models.StatusModel
 	token           string
 	phone_number_id string
 }
@@ -53,6 +54,7 @@ func main() {
 		templateCache:   templateCache,
 		contact:         &models.ContactModel{DB: db},
 		message:         &models.MessageModel{DB: db},
+		status:          &models.StatusModel{DB: db},
 		token:           token,
 		phone_number_id: phone_number_id,
 	}

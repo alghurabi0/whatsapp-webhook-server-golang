@@ -81,11 +81,13 @@ type ResMsg struct {
 }
 
 type Error struct {
+	Title     string     `json:"title,omitempty"`
 	Message   string     `json:"message,omitempty"`
 	Type      string     `json:"type,omitempty"`
 	Code      int        `json:"code,omitempty"`
 	FbTraceId string     `json:"fbtrace_id,omitempty"`
 	ErrorData *ErrorData `json:"error_data,omitempty"`
+	Href      string     `json:"href,omitempty"`
 }
 
 type ErrorData struct {

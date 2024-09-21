@@ -22,7 +22,8 @@ func (app *application) processPayload(w http.ResponseWriter, r *http.Request) {
 	}
 
 	ctx := context.Background()
-	if info == "msg" {
+	switch info {
+	case "msg":
 		err := app.getOrCreateContact(ctx, &payload)
 		if err != nil {
 			app.serverError(w, err)
@@ -33,10 +34,15 @@ func (app *application) processPayload(w http.ResponseWriter, r *http.Request) {
 			app.serverError(w, err)
 			return
 		}
-	} else if info == "status" {
+	case "status":
 		// determine what to do with status
+		err := app.saveStatus(ctx, &payload)
+		if err != nil {
+			app.serverError(w, err)
+			return
+		}
 		app.infoLog.Println("Staaaaatus")
-	} else {
+	default:
 		http.Error(w, "unexpected error", http.StatusBadRequest)
 		app.errorLog.Println("unexpected error")
 		app.errorLog.Println(payload)
