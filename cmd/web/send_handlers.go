@@ -42,6 +42,7 @@ func (app *application) sendMessage(w http.ResponseWriter, r *http.Request) {
 
 	ctx := context.Background()
 	wa_id := msg.To
+	msg.Id = resp.Messages[0].Id
 	_, err = app.message.Create(ctx, wa_id, msg)
 	if err != nil {
 		app.serverError(w, err)
