@@ -99,8 +99,8 @@ function createMessage(data, id) {
 
 function updateMessageStatus(messageId, statusData) {
     // Find the message element in the DOM using messageId
-    const messageElement = document.querySelector(`#${messageId}`);
-    
+    const messageElement = document.getElementById(messageId);
+
     if (messageElement) {
         const statusElement = messageElement.querySelector("#message_status");
         if (statusElement) {
