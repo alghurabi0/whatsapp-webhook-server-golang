@@ -107,6 +107,7 @@ function createMessage(data, id) {
         default:
             console.log("new type", data.type);
             break;
+    }
 
     message.appendChild(msgTmpl);
 }
