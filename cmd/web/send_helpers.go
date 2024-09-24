@@ -12,7 +12,7 @@ import (
 )
 
 func (app *application) prepareMessage(r *http.Request) (*models.Message, error) {
-	err := r.ParseForm()
+	err := r.ParseMultipartForm(10 << 20)
 	if err != nil {
 		return nil, err
 	}
