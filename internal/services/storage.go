@@ -44,6 +44,9 @@ func (s *StorageModel) DownloadAndUploadImg(url, id string) (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("error while streaming img to firebase storage: %v", err)
 	}
+	if err := writer.Close(); err != nil {
+		return "", fmt.Errorf("error closing writer: %v", err)
+	}
 	attrs, err := object.Attrs(ctx)
 	if err != nil {
 		return "", fmt.Errorf("error getting object attributes: %v", err)
