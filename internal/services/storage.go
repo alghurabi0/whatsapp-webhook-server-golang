@@ -1,7 +1,7 @@
 package services
 
 import (
-	"encoding/json"
+	"context"
 	"fmt"
 	"io"
 	"net/http"
@@ -14,9 +14,13 @@ type StorageModel struct {
 	ST *storage.Client
 }
 
-func (s *StorageModel) GetImageUrl(id string) (string, error) {
+func (s *StorageModel) DownloadAndUploadImg(url, id string) (string, error) {
 	token := os.Getenv("ACCESS_TOKEN")
-	url := fmt.Sprintf("https://graph.facebook.com/v20.0/%s/", id)
+	bkt, err := s.ST.DefaultBucket()
+	if err != nil {
+		return "", err
+	}
+
 	req, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		return "", err
@@ -29,22 +33,21 @@ func (s *StorageModel) GetImageUrl(id string) (string, error) {
 	}
 	defer resp.Body.Close()
 	if resp.StatusCode != http.StatusOK {
-		return "", fmt.Errorf("unexpected status: %d", resp.StatusCode)
-	}
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return "", err
+		return "", fmt.Errorf("unexpected status code while getting image: %d", resp.StatusCode)
 	}
 
-	var data map[string]interface{}
-	err = json.Unmarshal(body, &data)
+	object := bkt.Object("images/" + id)
+	ctx := context.Background()
+	writer := object.NewWriter(ctx)
+
+	_, err = io.Copy(writer, resp.Body)
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("error while streaming img to firebase storage: %v", err)
 	}
-	url, ok := data["url"].(string)
-	if !ok {
-		return "", fmt.Errorf("error: 'url' key not found or not a string")
+	attrs, err := object.Attrs(ctx)
+	if err != nil {
+		return "", fmt.Errorf("error getting object attributes: %v", err)
 	}
 
-	return url, nil
+	return attrs.MediaLink, nil
 }

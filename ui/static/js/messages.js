@@ -63,7 +63,7 @@ function getMessageTemplate() {
     //message.id = 'message';
     message.classList.add('max-w-[70%]', 'rounded-lg', 'p-3', 'mb-2');
 
-    let content = document.createElement('p');
+    let content = document.createElement('div');
     content.id = 'message_content';
     message.appendChild(content);
 
@@ -92,8 +92,25 @@ function createMessage(data, id) {
     }
     let content = msgTmpl.querySelector("#message_content");
     let timestamp = msgTmpl.querySelector("#message_timestamp");
-    content.textContent = data.text.body;
     timestamp.textContent = data.timestamp;
+    switch (data.type) {
+        case "text":
+            let text = document.createElement('p');
+            text.textContent = data.text.body;
+            content.appendChild(text)
+            break;
+        case "image":
+            let img = document.createElement('img');
+            if !data.image.link {
+                break;
+            }
+            img.src = data.image.link;
+            content.appendChild(img);
+            break;
+        default:
+            console.log("new type", data.type);
+            break;
+
     message.appendChild(msgTmpl);
 }
 

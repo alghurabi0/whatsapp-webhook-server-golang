@@ -87,7 +87,7 @@ func (app *application) saveMessage(ctx context.Context, payload *models.Payload
 		// determine if there is a location
 		break
 	case "text":
-		err := app.saveTextMessage(ctx, &msg, wa_id)
+		_, err := app.message.Create(ctx, wa_id, &msg)
 		if err != nil {
 			return err
 		}
@@ -99,11 +99,15 @@ func (app *application) saveMessage(ctx context.Context, payload *models.Payload
 		if err != nil {
 			return err
 		}
-		filename, err := app.downloadImg(url)
+		strgUrl, err := app.services.DownloadAndUploadImg(url, imgId)
 		if err != nil {
 			return err
 		}
-		break
+		msg.Image.Link = strgUrl
+		_, err = app.message.Create(ctx, wa_id, &msg)
+		if err != nil {
+			return err
+		}
 	case "sticker":
 		break
 	case "button":
