@@ -11,7 +11,9 @@ import (
 
 	"cloud.google.com/go/firestore"
 	firebase "firebase.google.com/go"
+	"firebase.google.com/go/storage"
 	"github.com/alghurabi0/whatsapp-webhook-server-golang/internal/models"
+	"github.com/alghurabi0/whatsapp-webhook-server-golang/internal/services"
 	"google.golang.org/api/option"
 )
 
@@ -22,6 +24,7 @@ type application struct {
 	contact         *models.ContactModel
 	message         *models.MessageModel
 	status          *models.StatusModel
+	services        *services.StorageModel
 	token           string
 	phone_number_id string
 }
@@ -29,13 +32,14 @@ type application struct {
 func main() {
 	addr := flag.String("addr", ":4002", "HTTP network address")
 	credFile := flag.String("cred-file", "./internal/whatsapp-3a492-firebase-adminsdk-wd7lf-7f8138bbd2.json", "Path to the credentials file")
+	dfBkt := flag.String("default-bucket", "whatsapp-3a492.appspot.com", "Defualt google storage bucket")
 	infoLog := log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
 	errorLog := log.New(os.Stderr, "Error\t", log.Ldate|log.Ltime|log.Lshortfile)
 	templateCache, err := newTemplateCache()
 	if err != nil {
 		errorLog.Fatal(err)
 	}
-	db, err := initDB(context.Background(), *credFile)
+	db, strg, err := initDB(context.Background(), *credFile, *dfBkt)
 	if err != nil {
 		errorLog.Fatalf("coldn't init db, err: %v\n", err)
 	}
@@ -55,6 +59,7 @@ func main() {
 		contact:         &models.ContactModel{DB: db},
 		message:         &models.MessageModel{DB: db},
 		status:          &models.StatusModel{DB: db},
+		services:        &services.StorageModel{ST: strg},
 		token:           token,
 		phone_number_id: phone_number_id,
 	}
@@ -70,9 +75,12 @@ func main() {
 	}
 }
 
-func initDB(ctx context.Context, credFile string) (*firestore.Client, error) {
+func initDB(ctx context.Context, credFile, dfBkt string) (*firestore.Client, *storage.Client, error) {
 	opt := option.WithCredentialsFile(credFile)
-	app, err := firebase.NewApp(ctx, nil, opt)
+	cfg := &firebase.Config{
+		StorageBucket: dfBkt,
+	}
+	app, err := firebase.NewApp(ctx, cfg, opt)
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -82,20 +90,25 @@ func initDB(ctx context.Context, credFile string) (*firestore.Client, error) {
 		log.Fatalln(err)
 	}
 
+	storageClient, err := app.Storage(ctx)
+	if err != nil {
+		log.Fatalln(err)
+	}
+
 	//TODO - ping the database to check if it's connected
 	docRef := firestoreClient.Collection("ping").Doc("test")
 	docSnapshot, err := docRef.Get(ctx)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 	var data map[string]interface{}
 	if err := docSnapshot.DataTo(&data); err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 	expectedValue := "pong"
 	if value, ok := data["ping"].(string); !ok || value != expectedValue {
-		return nil, fmt.Errorf("ping test failed, expected %s, got %s", expectedValue, value)
+		return nil, nil, fmt.Errorf("ping test failed, expected %s, got %s", expectedValue, value)
 	}
 
-	return firestoreClient, nil
+	return firestoreClient, storageClient, nil
 }
