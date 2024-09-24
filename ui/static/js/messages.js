@@ -101,9 +101,6 @@ function createMessage(data, id) {
             break;
         case "image":
             let img = document.createElement('img');
-            if !data.image.link {
-                break;
-            }
             img.src = data.image.link;
             content.appendChild(img);
             break;
