@@ -21,9 +21,30 @@ func (app *application) prepareMessage(r *http.Request) (*models.Message, error)
 		return nil, errors.New("empty wa_id")
 	}
 	text := r.FormValue("message_content")
-	if wa_id == "" {
-		return nil, errors.New("empty message_content")
+	if text != "" {
+		return app.sendText(text, wa_id), nil
 	}
+	img, handler, err := r.FormFile("img")
+	if err != nil {
+		if err == http.ErrMissingFile {
+			fmt.Println("no file in this message")
+		}
+		return nil, fmt.Errorf("error with getting file from form: %v", err)
+	}
+	if img != nil {
+		defer img.Close()
+		link, err := app.services.UploadImg(img, handler.Filename)
+		if err != nil {
+			return nil, err
+		}
+
+		return app.sendImage(link, wa_id), nil
+	}
+
+	return nil, nil
+}
+
+func (app *application) sendText(text, wa_id string) *models.Message {
 	msg := &models.Message{
 		MessagingProduct: "whatsapp",
 		RecipientType:    "individual",
@@ -40,8 +61,27 @@ func (app *application) prepareMessage(r *http.Request) (*models.Message, error)
 		Location: nil,
 		Button:   nil,
 	}
+	return msg
+}
 
-	return msg, nil
+func (app *application) sendImage(link, wa_id string) *models.Message {
+	msg := &models.Message{
+		MessagingProduct: "whatsapp",
+		RecipientType:    "individual",
+		To:               wa_id,
+		Type:             "text",
+		Text:             nil,
+		Context:          nil,
+		Referral:         nil,
+		Reaction:         nil,
+		Image: &models.Image{
+			Link: link,
+		},
+		Sticker:  nil,
+		Location: nil,
+		Button:   nil,
+	}
+	return msg
 }
 
 func (app *application) sendMsgReq(jsonData []byte) (*models.Response, int, error) {
