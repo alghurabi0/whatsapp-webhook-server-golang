@@ -69,7 +69,7 @@ func (app *application) sendImage(link, wa_id string) *models.Message {
 		MessagingProduct: "whatsapp",
 		RecipientType:    "individual",
 		To:               wa_id,
-		Type:             "text",
+		Type:             "image",
 		Text:             nil,
 		Context:          nil,
 		Referral:         nil,
