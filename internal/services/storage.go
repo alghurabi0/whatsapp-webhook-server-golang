@@ -2,11 +2,14 @@ package services
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
 	"os"
+	"time"
 
+	gcloud "cloud.google.com/go/storage"
 	"firebase.google.com/go/storage"
 )
 
@@ -47,10 +50,20 @@ func (s *StorageModel) DownloadAndUploadImg(url, id string) (string, error) {
 	if err := writer.Close(); err != nil {
 		return "", fmt.Errorf("error closing writer: %v", err)
 	}
-	attrs, err := object.Attrs(ctx)
+	expiration := time.Now().Add(time.Hour * 8640)
+	opts := &gcloud.SignedURLOptions{
+		Expires: expiration,
+		Method:  http.MethodGet,
+	}
+	link, err := bkt.SignedURL("images/"+id, opts)
 	if err != nil {
-		return "", fmt.Errorf("error getting object attributes: %v", err)
+		object.Delete(ctx)
+		return "", fmt.Errorf("couldn't get signed url: %v", err)
+	}
+	if link == "" {
+		object.Delete(ctx)
+		return "", errors.New("empty photo signed file url")
 	}
 
-	return attrs.MediaLink, nil
+	return link, nil
 }
